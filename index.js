@@ -45,9 +45,13 @@ ExpressOAuthServer.prototype.authenticate = function(options) {
       })
       .tap(function(token) {
         res.locals.oauth = { token: token };
+        req.token = token;
+      })
+      .then(function(){
+        next();
       })
       .catch(function(e) {
-        return handleError(e, req, res);
+        return next(e);
       })
   };
 };
@@ -106,14 +110,14 @@ ExpressOAuthServer.prototype.token = function(options) {
       })
       .tap(function(token) {
         res.locals.oauth = { token: token };
+        req.token = token;
       })
       .then(function() {
-        return handleResponse(req, res, response);
+        next();
       })
       .catch(function(e) {
-        return handleError(e, req, res, response);
-      })
-      .finally(next);
+        return next(e);
+      });
   };
 };
 
